@@ -1,0 +1,195 @@
+I assume you are good with Python coding. I always point people to the OpenAI Cookbook to learn the fundamentals of how you can work with LLMs:
+
+https://cookbook.openai.com/
+
+You can use this LLM Basics Quiz I made, to test your knowledge: (it is a google form that does not collect emails)
+
+https://docs.google.com/forms/d/e/1FAIpQLScbWN3qwqeIc0b1cCRqm7y8dP4hUQE6WySmqcTVxyVxruwdoA/viewform
+
+Next, to start build applications you can look into Langroid, the multi-agent LLM framework from  ex-CMU and UW Madison researchers: https://github.com/langroid/langroid. We expressly designed this framework to simply building applications, using an agent-oriented approach from the start. You can define agents with optional tools and vector-db, assign them tasks, and have them collaborate via messages: this is a “conversational programming” paradigm. 
+It works with local/open and remote/proprietary LLMs. 
+
+We have quick start guide starting here:
+https://langroid.github.io/langroid/
+
+We have a few companies using it in production (contact center agent  productivity, resume ranking, policy compliance). 
+
+To address a couple of your questions: you don’t want to get into fine-tuning/training  early in your journey. Once comfortable, visit r/localLlama to find fine-tuning resources. 
+
+LLM vs Agents: an agent is a convenient wrapper around an LLM, sort of an “intelligent entity” if you will, that has various capabilities, and it can be equipped with access to external docs via (vector) DB, tools, etc. I elaborate here 
+https://langroid.github.io/langroid/
+
+---
+
+r/learnmachinelearning
+
+---
+
+I just put together an outline that gets you from novice to running open source LLM. This gets you half way to where you need to be. 
+
+Details at [https://www.reddit.com/r/MachineLearning/comments/18g21av/happy\_holidays\_here\_is\_your\_100\_free\_large/](https://www.reddit.com/r/MachineLearning/comments/18g21av/comment/kcza7y3/)
+
+---
+
+To me that seems, that your problem is more of an software engineering one than a data science one. That is a common pattern though, as data scientists know a lot about data, models an statistics, but less about the SWE part that is crucial for productization. 
+
+I had the same issue post my graduation. 
+
+What really helped was starting a software engineering job as an MLOps engineer. These abilities also made my capabilities to do data science and MLEng much better. So I would recommend to invest some time in learning software engineering. Try to get any LLM into a production system before thinking about optimization and staying up to date with the latest research.   
+
+
+Some practical resources: 
+
+This is an awesome resource: [https://fullstackdeeplearning.com/](https://fullstackdeeplearning.com/)
+
+They have a course on [productizing LLMs](https://fullstackdeeplearning.com/llm-bootcamp/). 
+
+While I did not read it, colleagues of mine recommended [this book](https://www.manning.com/books/llms-in-production).
+
+---
+
+When you say build an llm do you mean?
+
+Build a new llm from Scratch?
+Or how do I use existing llms and deploy them to production?
+
+---
+
+Pick up a library like langchain or haystack. Build some prototype of the llm agent you want. Both the above libraries have food examples or cookbooks to get started on different applications. At some point you will realise the components lack flexibility then you can go deeper and implement components yourself. This was my approach
+
+---
+
+Google Cloud or Langchain
+
+---
+
+Emmm huh idk
+
+---
+
+If you want “general” info I found lots on YouTube but this one I thought gives an overview of the whole software “stack” involved with ML.  [https://youtu.be/HJl50-GHQr8?si=0pyw6_kz7CMEmRst](https://youtu.be/HJl50-GHQr8?si=0pyw6_kz7CMEmRst)
+
+---
+
+Check out r/LocalLLaMA. 
+
+Its a great community, I’ve gotten a lot of support from this community in the past. They also have some guides if I remember correctly.
+
+Just make sure that when you post in this sub that you make it thorough and detailed. Otherwise the mod might close down your post because your question is already been answered.
+
+
+I would suggest you make a post where you seek information and practical advice from people who might share similar experiences such as yourself (on localLLaMA that is)
+
+---
+
+Langroid sounds like an STI. Cool repo, terrible name.
+
+---
+
+I will go through this! 
+Thanks a lot!
+
+---
+
+This answer is so unhelpful lol. None of this addressed building your own LLM.
+
+---
+
+Didn't know this existed. Thank you!
+
+---
+
+Thank you so much!
+
+---
+
+As a principal engineer working in modern banking in London we've pretty much banned the Data Scientists from writing services without an Engineer
+
+No idea how to build software and should stick to math and analysis
+
+---
+
+As per my limited knowledge, I know there are open source pre trained models available and I'd have to fine tune them and deploy to production. 
+
+However, that's the extent of what I know. How do I actually do this? What's the difference between an LLM and LLM agent? How do the actual LLM's work? What do I need to know to understand the underlying concept of an LLM?
+
+---
+
+Thanks for your input! 
+
+Can you help me understand how an LLM agent is different from just an LLM? 
+After this, what I understand is pick a framework and build an application to understand the concepts and then learn as I continue working on different applications?
+
+---
+
+So, once you get it, you can’t get rid of it 😂
+
+---
+
+Thanks , and the name — you’re not wrong !
+It’s funny the places you end up when trying to name something with a bunch of constraints - domain availability, conveying Language, conveying agent-oriented, etc 😬
+
+---
+
+Note that OP asked about “building LLM applications”, not “building/training an LLM”
+
+---
+
+I don't think it's a particularly good suggestion for what you are asking.
+
+try r/LocalLLaMA
+
+---
+
+If you end up liking the outline, it may be helpful to sign up for [https://open.substack.com/pub/whiteowlconsultinggroup/p/large-language-model-roadmap-is-available?r=32xlk4&utm\_campaign=post&utm\_medium=web](https://open.substack.com/pub/whiteowlconsultinggroup/p/large-language-model-roadmap-is-available?r=32xlk4&utm_campaign=post&utm_medium=web) . Thinking that if 100 people sign up, then there is enough interest to do a group Q&A on the outline on  YouTube sometime in the next week or two.
+
+---
+
+What i found is that the mathematical/quantitative problems that we encounter in business are not even closely as hard as what i encountered in my studies. So i dont use a lot of the advanced statistical methods anyways. 
+
+But not being able to properly deploy a model to production was a real impediment. Plus, when i write tests for analysis code and come back a year later its so much easier to understand what i was doing and i can be (almost) sure refactoring does not break other parts of the code. 
+
+From my brief stint in Finance i know that you people have al little more room (and data) for doing exciting quantitative methods. But where i work right now you can be a statistical god and be almost an impediment rather than help to business problems without engineering expertise. For the level of math common in the industry its far easier for the engineers to pick up the math as vice versa. Even all the large deep learning we do is more of an engineering than a dara science problem as these are black boxes anyways. 
+
+I‘m getting humbled a lot as a physicist. Sometimes i miss my my mathy problems though.
+
+---
+
+I think you need a crash course on LLMs. A quick search on YouTube and watching short intro videos should help with this. Try to focus on the less technical ones before moving to more technical ones.
+
+https://www.youtube.com/results?sp=mAEA&search_query=large+language+models+explained
+
+I know this is a long one but I think it can give you an introduction to what they are and how they work, it is by Andrej Kaparthy, he works with LLMs at OpenAI
+
+https://youtu.be/zjkBMFhNj_g?si=HCKHHhpIJuL5NBlR
+
+I think there are courses out there for different use cases, I think free code camp just dropped one for RAG
+
+https://youtu.be/JEBDfGqrAUA?si=82azhLesyh59eAqO
+
+ And here is another for langchain
+
+https://youtu.be/HSZ_uaif57o?si=avyThqNr8LBAaOzF
+
+And another one for Palm2 API
+
+https://youtu.be/LHbtSrkTsIE?si=QB9FCMfx4iS_bPMX
+
+Please note that I have not seen the free code camp videos myself so I can't speak to their quality exactly but they have not failed me in the past. They help get you from novice to capable.
+
+I should mention again that I strongly advise starting with a quick search and watching the short intro videos first, you can also lookup videos talking about the use and application of these llms.
+
+---
+
+Read Google's 2017 paper on transformers
+
+---
+
+I'm not much ahead of you on this journey but I think the agent is the app on top of an LLM.  The agent is what the user sees, maybe just a chatbot and implementing code under it, but probably some "safety" rules for the LLM to consider.  There will probably also be a connection to a vector database so the agent will remember the conversation and help the LLM through it.  The agent may also have connections to external or an organization's internal data.  Frameworks like LangChain help app developers glue all this together, which is part of orchestration.  The discipline or field for doing this is called MLops or LLMops.  Best to you on your journey!
+
+---
+
+This is immensely helpful! Thank you so much!
+
+---
+
