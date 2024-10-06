@@ -1,13 +1,161 @@
-<html>
-   <body>
-      <form action = "http://localhost:5000/reddit_summarizer" method = "post">
-         <p>Enter Name:</p>
-         <p><input type = "text" name = "url" /></p>
-         <p><input type = "submit" value = "submit" /></p>
-      </form>
-      {% if summary %}
-    <h2>Summary:</h2>
-    <p>{{ summary }}</p>
-    {% endif %}
-   </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reddit Summarizer</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .card {
+            margin-top: 20px;
+        }
+        .summary-result {
+            margin-top: 10px;
+        }
+        .spinner-border {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="text-center mb-4">Reddit Summarizer</h1>
+
+        <!-- Search Form -->
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="query-input" placeholder="Ask a question to find relevant Reddit posts">
+                    <button class="btn btn-primary" id="search-btn">Search</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loader -->
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <div class="spinner-border text-primary" role="status" id="loading-spinner">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Results -->
+        <div class="row">
+            <div class="col-md-8 offset-md-2" id="results-container">
+                <!-- Reddit links will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+    <!-- Custom JS -->
+    <script>
+        document.getElementById('search-btn').addEventListener('click', function () {
+            const query = document.getElementById('query-input').value;
+            if (!query) {
+                alert("Please enter a query.");
+                return;
+            }
+
+            // Show loading spinner
+            document.getElementById('loading-spinner').style.display = 'block';
+
+            // Clear previous results
+            document.getElementById('results-container').innerHTML = '';
+
+            // Fetch Reddit search results
+            fetch(`/search-reddit?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('loading-spinner').style.display = 'none';
+
+                    if (data.results && data.results.length > 0) {
+                        const resultsContainer = document.getElementById('results-container');
+                        data.results.forEach(result => {
+                            const card = document.createElement('div');
+                            card.className = 'card';
+                            card.innerHTML = `
+                                <div class="card-body">
+                                    <h5 class="card-title">${result.title}</h5>
+                                    <a href="#" class="btn btn-outline-primary summarize-btn" data-url="${result.url}">Summarize</a>
+                                    <div class="summary-result" id="summary-${result.url}"></div>
+                                </div>
+                            `;
+                            resultsContainer.appendChild(card);
+                        });
+                    } else {
+                        document.getElementById('results-container').innerHTML = `
+                            <div class="alert alert-warning" role="alert">
+                                No results found for your query.
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('loading-spinner').style.display = 'none';
+                    console.error("Error fetching Reddit results:", error);
+                    document.getElementById('results-container').innerHTML = `
+                        <div class="alert alert-danger" role="alert">
+                            An error occurred while fetching results. Please try again later.
+                        </div>
+                    `;
+                });
+        });
+
+        // Use event delegation to capture clicks on dynamically added buttons
+        document.addEventListener('click', function(event) {
+            if (event.target && event.target.classList.contains('summarize-btn')) {
+                event.preventDefault();
+                const url = event.target.getAttribute('data-url');
+                const summaryContainerId = `summary-${url}`;
+                const summaryContainer = document.getElementById(summaryContainerId);
+
+                // Show "Generating Summary..." message directly under the clicked URL
+                summaryContainer.innerHTML = `
+                    <div class="text-center">
+                        <p><strong>Generating Summary...</strong></p>
+                    </div>
+                `;
+
+                // Fetch summary for the selected Reddit post
+                fetch(`/summarize-reddit?url=${encodeURIComponent(url)}`)
+                    .then(response => response.json())
+                    .then(summaryData => {
+                        if (summaryData.error) {
+                            throw new Error(summaryData.error);
+                        }
+
+                        summaryContainer.innerHTML = `
+                            <div class="card mt-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Summary</h5>
+                                    <p class="card-text">${summaryData.summary}</p>
+                                </div>
+                            </div>
+                        `;
+                    })
+                    .catch(error => {
+                        console.error("Error summarizing content:", error);
+                        summaryContainer.innerHTML = `
+                            <div class="alert alert-danger" role="alert">
+                                ${error.message || 'An error occurred while summarizing the content. Please try again later.'}
+                            </div>
+                        `;
+                    });
+            }
+        });
+    </script>
+</body>
 </html>
