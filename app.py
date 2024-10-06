@@ -1,13 +1,15 @@
 from flask import Flask, request, jsonify,url_for,render_template
-import requests
-import re
 import praw
-import os
-import openai
-import textwrap
+from langchain_community.document_loaders import TextLoader
+from langchain_openai import OpenAIEmbeddings
+from langchain_text_splitters import CharacterTextSplitter
+from langchain_community.vectorstores import FAISS
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.chat_models import ChatOpenAI 
+from langchain.chains import RetrievalQA
+import re
 
-openai.api_key  = 'sk-**********'
-
+api_key  = 'sk-****************************************'
 
 app = Flask(__name__)
 
@@ -60,43 +62,6 @@ def scrape_reddit_comments(url):
                 comment_count += 1
     print("comments added in the file")
 
-def summarize_chunk(chunk):
-    try:
-        
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {   "role" : "system","content": "You are a tech savy reddit user. Your task is to summarize the reddit discussion. Behave like a techology lover. Keep the feel of the content. ANd respond in bullet points ",
-                    "role": "user", "content": f"Please summarize the following text:\n\n{chunk}"}
-            ],
-            max_tokens=150,  # Adjust the token limit as needed
-            temperature=0.5,
-        )
-
-        summary = response['choices'][0]['message']['content'].strip()
-        return summary
-
-    except Exception as e:
-        print(f"An error occurred while summarizing a chunk: {e}")
-        return None
-
-def summarize_document(document_text, chunk_size=3000):
-    # Split the document into chunks based on the specified chunk size
-    wrapped_text = textwrap.fill(document_text, width=chunk_size)
-    chunks = wrapped_text.split('\n')
-    
-    # Summarize each chunk
-    summaries = []
-    for chunk in chunks:
-        summary = summarize_chunk(chunk)
-        if summary:
-            summaries.append(summary)
-    
-    # Combine summaries and summarize again
-    combined_summary = ' '.join(summaries)
-    final_summary = summarize_chunk(combined_summary)
-    
-    return final_summary
 
 @app.route('/')
 def index():
@@ -110,35 +75,38 @@ def search_reddit_endpoint():
 
     results = search_reddit(query)
     return jsonify({'results': results})
-
-
-def summarize_reddit(url):
-    try:
-        # Scrape Reddit post content using BeautifulSoup
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
-        page = requests.get(url, headers=headers)
-        
-        if page.status_code != 200:
-            return "Error fetching the Reddit post"
-
-        scrape_reddit_comments(url)
-        document_text = read_file('comments.txt')
-        final_summary = summarize_document(document_text)
-        return final_summary
-        
-    except Exception as e:
-        print(f"Error while summarizing: {e}")
-        return "Error summarizing content."
     
 @app.route('/summarize-reddit', methods=['GET'])
 def summarize_reddit_endpoint():
     url = request.args.get('url')
-    if not url:
-        return jsonify({'error': 'URL parameter is missing'}), 400
-
-    summary = summarize_reddit(url)
-    return jsonify({'summary': summary})
+    scrape_reddit_comments(url)
+    text = read_file('comments.txt')
+    text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=1000,
+            chunk_overlap=50,
+            length_function=len
+            )
+    chunks = text_splitter.split_text(text=text)
+    print("chunks created")
+    embeddings =OpenAIEmbeddings(api_key=api_key,model="text-embedding-3-small")
+    print("embeddings created")
+    VectorStore = FAISS.from_texts(chunks, embeddings)
+    llm = ChatOpenAI(api_key=api_key,model_name='gpt-4o-mini')
+    print("llm initialized")
+    query = "summarize the give document"
     
+    qa_chain = RetrievalQA.from_chain_type(
+            llm=llm ,
+            chain_type="stuff", 
+            retriever=VectorStore.as_retriever()
+    )
+    print("qa chain ")
+    summary = qa_chain.run({"query": f"You are a tech savy reddit user. Your task is to summarize the reddit discussion. Behave like a techology lover. Keep the feel of the content. ANd respond in bullet points. Question: {query}"})
+    if isinstance(summary, dict):
+        answer = summary.get('result', 'No result found')  # Ensure to extract the result
+    else:
+        answer = str(summary)  # Convert to string if it's not a dictionary
+        
+    return jsonify({'summary': answer})
 if __name__ == '__main__':
    app.run()
