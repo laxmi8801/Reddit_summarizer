@@ -35,9 +35,9 @@ def search_reddit(query, limit=5):
     
 def scrape_reddit_comments(url):
     reddit = praw.Reddit(
-        client_id='II237Mryzext2vqt5VJ0gg',
-        client_secret='Hlb0Y4YGC2dW2w3hzc9AgElJmuTOdg',
-        user_agent='python:comment_scraper:v1.0 (by /u/Alert_Passenger8)',
+        client_id='',
+        client_secret='',
+        user_agent='python:comment_scraper:v1.0 (by /u/)',
     )
 
     # Get the submission from the URL
