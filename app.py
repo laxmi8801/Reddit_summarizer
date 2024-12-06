@@ -21,8 +21,8 @@ def search_reddit(query, limit=5):
     
     reddit = praw.Reddit(
         client_id='client_id',
-        client_secret='',
-        user_agent='python:comment_scraper:v1.0 (by /u/user_anme)',
+        client_secret='client_secret',
+        user_agent='python:comment_scraper:v1.0 (by /u/user_name)',
     )
     """Search Reddit for posts related to a query."""
     results = []
