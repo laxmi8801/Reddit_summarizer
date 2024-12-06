@@ -20,9 +20,9 @@ def read_file(file_path):
 def search_reddit(query, limit=5):
     
     reddit = praw.Reddit(
-        client_id='II237Mryzext2vqt5VJ0gg',
-        client_secret='Hlb0Y4YGC2dW2w3hzc9AgElJmuTOdg',
-        user_agent='python:comment_scraper:v1.0 (by /u/Alert_Passenger8)',
+        client_id='client_id',
+        client_secret='',
+        user_agent='python:comment_scraper:v1.0 (by /u/user_anme)',
     )
     """Search Reddit for posts related to a query."""
     results = []
